@@ -4,8 +4,11 @@ from uuid import uuid4
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import requests
 
 from BlockChain import Blockchain
+from default_data import TRANSACTIONS
+from pre_data_generation import generate_new_block, generate_new_transaction
 from constants import TRANSACTION_CLASS_DICT, TRANSACTION_DICT
 
 
@@ -124,7 +127,7 @@ def consensus():
 # 溯源查询
 @app.route('/product/history', methods=['GET'])
 def get_product_history():
-    product_id = request.args.get('product_id')
+    product_id = int(request.args.get('product_id'))
     if not product_id:
         return jsonify({'message': 'Missing product_id'}), 400
     
@@ -146,4 +149,5 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default=5002, type=int, help='port to listen on')
     args = parser.parse_args()  # 通过parse_args()方法尝试对收到的参数关键字进行解释
     port = args.port  # 从args对象中取出其中的参数关键字--port 参数的内容，也可能是获取到预设的默认值
+
     app.run(host='0.0.0.0', port=port)

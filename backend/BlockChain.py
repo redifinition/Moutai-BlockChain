@@ -54,15 +54,10 @@ class Blockchain(object):
             print(f'{last_block}')
             print(f'{block}')
             print("\n-----------\n")
-            last_block_hash = self.hash(last_block)
+            last_block_hash = last_block['hash']
             # 检查块的哈希是否正确
             if block['previous_hash'] != last_block_hash:
                 return False  # 如果发现当前在检查的区块的previous_hash值与它实际连接的前一区块的hash值不同，则证明此链条有问题，终止检查
-
-            # 检查工作量证明是否正确
-            if not self.valid_proof(last_block['proof'], block['proof']):
-                return False
-
             last_block = block  # 让当前区块变成前一个区块，以迭代到一下次循环
             current_index += 1  # 让下一个区块区区块号+1
 
@@ -91,7 +86,7 @@ class Blockchain(object):
                 # 如果此节点的区块链长度比本节点区块链长度长，且链条合法，则证明是值得覆盖本节点链条的合法链条
                 if length > max_length and self.valid_chain(chain):
                     max_length = length
-                    new_chain = chain
+                    new_chain = [Block.dict_to_block(block) for block in chain]
 
         # 用找到的比本节点区块链链条长的链条覆盖本节点的旧链条
         if new_chain:

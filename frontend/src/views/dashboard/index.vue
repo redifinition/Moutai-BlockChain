@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: lyq
  * @Date: 2021-11-19 15:21:54
- * @LastEditTime: 2024-04-06 00:06:33
+ * @LastEditTime: 2024-04-10 16:40:59
  * @LastEditors: lyq
 -->
 <template>
@@ -41,7 +41,9 @@
       @click="registerNewNode()"
       >注册节点</el-button
     >
+    <p v-html="htmlContent"></p>
   </div>
+
 </template>
 
 <script>
@@ -51,6 +53,13 @@ export default {
   name: "Dashboard",
   computed: {
     ...mapGetters(["name"]),
+    renderedMarkdown() {
+      return marked(this.markdownContent)
+    },
+  },
+  mounted() {
+    // 在组件挂载时将HTML内容加载到htmlContent中
+    this.loadHtmlFile();
   },
   methods: {
     validateNodeUrls(nodeUrls) {
@@ -93,14 +102,24 @@ export default {
       node_option: this.$globalVariables.nodeList,
       current_node: this.$globalVariables.currentNode,
       newNodes: [],
+      htmlContent:''
     };
   },
   created() {},
-  // methods:{
-  //   changeCurrentNode(value){
-  //     process.env.VUE_APP_CURRENT_NODE = value
-  //   }
-  // }
+  methods:{
+    loadHtmlFile() {
+      this.htmlContent = "";
+      let xhr = new XMLHttpRequest()
+      // 线上链接地址
+      // xhr.open("GET", val.url, false);
+      
+      // public文件夹下的绝对路径
+      xhr.open("GET", "doc.html", false); 
+      xhr.overrideMimeType("text/html;charset=utf-8")
+      xhr.send(null)
+      this.htmlContent = xhr.responseText;
+  }
+}
 };
 </script>
 
